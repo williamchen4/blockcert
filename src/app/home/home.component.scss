@@ -1,0 +1,40 @@
+/*!
+ * Copyright (C) 2018. Technology Services at California State University, Fresno
+ */
+
+.container {
+    position: absolute;
+    top: 60px;
+    bottom: 60px;
+    left: 0;
+    right: 0;
+    .sidenav {
+        width: 280px;
+    }
+}
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+}
+
+mat-toolbar {
+    span {
+        padding: 0 16px;
+    }
+    .fill-remaining-space {
+        flex: 1 1 auto;
+    }
+
+}

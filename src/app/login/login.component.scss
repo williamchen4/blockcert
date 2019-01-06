@@ -1,0 +1,21 @@
+/*!
+ * Copyright (C) 2018. Technology Services at California State University, Fresno
+ */
+
+.login-form {
+    text-align: center;
+    min-width: 180px;
+    max-width: 320px;
+    width: 100%;
+    margin: 0 auto;
+    padding-top: 100px;
+    .full-width {
+        width: 100%;
+    }
+    .button-row {
+        button {
+            margin: 0 4px;
+        }
+    }
+}
+

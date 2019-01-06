@@ -1,0 +1,31 @@
+<!--
+  ~ Copyright (C) 2018. Technology Services at California State University, Fresno
+  -->
+
+<div class="container">
+    <form class="login-form" [formGroup]="loginForm" (ngSubmit)="login()">
+        <h1 class="mat-display-1">{{appName}}</h1>
+        <mat-form-field class="full-width">
+            <input matInput placeholder="Email" type="text" formControlName="username"
+                   required maxlength="64" minlength="4" autocomplete="email">
+            <mat-error *ngIf="email.invalid && !email.hasError('required')">
+                <strong>Invalid</strong> email, use 6 characters
+            </mat-error>
+            <mat-error *ngIf="email.hasError('required')">
+                Email is <strong>required</strong>
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field class="full-width">
+            <input matInput placeholder="Password" type="password" formControlName="password"
+                   required maxlength="24" minlength="2" autocomplete="current-password">
+            <mat-error *ngIf="password.invalid && !password.hasError('required')">
+                <strong>Invalid</strong> password, use minimum 4 characters
+            </mat-error>
+        </mat-form-field>
+
+        <div class="button-row">
+            <!--button type="button" mat-stroked-button [routerLink]="['/register']">Register</button-->
+            <button type="submit" mat-flat-button color="primary" [disabled]="!loginForm.valid">Login</button>
+        </div>
+    </form>
+</div>

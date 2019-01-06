@@ -1,0 +1,289 @@
+/*!
+ * Copyright (C) 2018. Technology Services at California State University, Fresno
+ */
+
+/deep/ .mat-tab-header {
+    background: #212121;
+}
+
+form {
+    padding-top: 32px;
+    text-align: center;
+    mat-form-field {
+        min-width: 300px;
+        mat-select, input {
+            width: 100%;
+        }
+    }
+
+    .buttons {
+        margin-top: 4px;
+    }
+    button {
+        margin: 0 4px;
+    }
+    button.picker {
+        margin-bottom: 8px;
+    }
+    .img-badge {
+        width: 164px;
+        height: 164px;
+        -o-object-fit: cover;
+        object-fit: cover;
+    }
+    .img-cover {
+        width: 96px;
+        height: 96px;
+        -o-object-fit: cover;
+        object-fit: cover;
+        margin: 16px 8px 0 8px;
+    }
+    p.mat-body-1 {
+        margin-top: 4px;
+    }
+    .form-title {
+        width: 332px;
+        margin: 0 8px 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        h5 {
+            padding-top: 16px;
+        }
+        img {
+            border-radius: 6px;
+        }
+    }
+    .ctrl-arr-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        .ctrl-arr-item {
+            position: relative;
+            .ctrl-btn-clear {
+                position: absolute;
+                right: 0;
+                top: 0;
+                margin: 0;
+            }
+        }
+    }
+    .ctrl-btn-add {
+        margin-top: -16px;
+    }
+    mat-radio-group {
+        mat-radio-button {
+            //margin: 0 16px;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            -ms-appearance: none;
+            -o-appearance: none;
+            appearance: none;
+        }
+    }
+}
+
+
+
+center,
+{
+margin: 0;
+padding: 0;
+border: 0;
+font-size: 100%;
+font: inherit;
+vertical-align: baseline;
+
+}
+html {width: 50px; height: 50px;} 
+html, body {
+max-height: 250px;
+max-width: 333.25x;
+min-height: 250px;
+min-width: 333.25px;
+}
+
+body {
+background-image: url(https://s3-us-west-2.amazonaws.com/fswillc1/cert2.png);
+background-repeat: no-repeat;
+background-size: 100%;
+position: relative;
+color: #c2c2c2;
+font-family: 'Lobster', cursive;
+}
+.cert-name{
+position: absolute;
+left: 50%;
+-webkit-transform: translateX(-50%);
+transform: translateX(-50%);
+top: 27%;
+}
+.badge{
+    position: absolute;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    top: 39%;
+    height: 13%;
+    width: 10%;     
+}
+.logo{
+    position: absolute;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    top: 73%;
+    height: 13%;
+    width: 10%;
+}
+.date{
+position: absolute;
+left: 30%;
+-webkit-transform: translateX(-50%);
+transform: translateX(-50%);
+top: 714px;
+}
+.signature{
+position: absolute;
+left: 69%;
+-webkit-transform: translateX(-50%);
+transform: translateX(-50%);
+top: 714px;
+}
+.recipient-name{
+position: absolute;
+left: 50%;
+-webkit-transform: translateX(-50%);
+transform: translateX(-50%);
+top: 464px;
+}
+.description{
+position: absolute;
+left: 50%;
+-webkit-transform: translateX(-50%);
+transform: translateX(-50%);
+top: 63%;
+max-width: 100ch; 
+}
+
+.body2 {
+    background-image: url(https://s3-us-west-2.amazonaws.com/fswillc1/images/cert6.jpg);
+    background-repeat: no-repeat;
+    background-size: 100%;
+    position: relative;
+    color: 	#000000;
+    font-family: 'Lobster', cursive;
+}
+.cert-name2{
+    position: absolute;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    top: 10%;
+
+}
+.badge2{
+    position: absolute;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    top: 24%;
+    height: 13%;
+    width: 10%;     
+}
+.logo2{
+    position: absolute;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    top: 77%;
+    height: 13%;
+    width: 10%;
+}
+
+.recipient-name2{
+    position: absolute;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    top: 450px;
+}
+.description2{
+    position: absolute;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    top: 64%;
+    max-width: 100ch; 
+}
+.body3 {
+    background-image: url(https://s3-us-west-2.amazonaws.com/fswillc1/images/cert9.jpg);
+    background-repeat: no-repeat;
+    background-size: 100%;
+    position: relative;
+    color: 	#000000;
+    font-family: 'Lobster', cursive;
+}
+
+.cert-name3{
+    position: absolute;
+    left: 49%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    top: 30%;
+
+}
+.acknowledgement3{
+    position: absolute;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    top: 384px;  
+}
+.badge3{
+    position: absolute;
+    left: 49.5%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    top: 70%;
+    height: 13%;
+    width: 10%;
+}
+.logo3{
+    position: absolute;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    top: 17%;
+    height: 13%;
+    width: 10%;
+}
+.date3{
+    position: absolute;
+    left: 21.5%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    top: 699px;
+}
+.signature3{
+    position: absolute;
+    left: 76.5%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    top: 699px;
+}
+.recipient-name3{
+    position: absolute;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    top: 450px;
+}
+.description3{
+    position: absolute;
+    left: 49.7%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    top: 58%;
+    max-width: 100ch; 
+}

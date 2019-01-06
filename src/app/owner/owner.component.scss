@@ -1,0 +1,42 @@
+/*!
+ * Copyright (C) 2018. Technology Services at California State University, Fresno
+ */
+
+ /deep/ .mat-tab-header {
+    background: #212121;
+}
+
+form {
+    padding-top: 32px;
+    text-align: center;
+    mat-form-field {
+        min-width: 300px;
+        mat-select, input {
+            width: 100%;
+        }
+    }
+    .buttons {
+        margin-top: 4px;
+    }
+    button {
+        margin: 0 4px;
+    }
+    .img-badge {
+        width: 164px;
+        height: 164px;
+        -o-object-fit: cover;
+        object-fit: cover;
+    }
+    button.picker {
+        margin-bottom: 8px;
+    }
+
+    .radios {
+        width: 300px;
+        margin: 8px auto 0;
+        text-align: left;
+        mat-radio-button {
+            margin: 0 16px;
+        }
+    }
+}

@@ -1,0 +1,82 @@
+/*!
+ * Copyright (C) 2018. Technology Services at California State University, Fresno
+ */
+
+ /deep/ .mat-tab-header {
+    background: #212121;
+}
+/*
+.mat-form-field-placeholder {
+    display:block !important;
+    }
+*/
+form {
+    padding-top: 32px;
+    text-align: center;
+    mat-form-field {
+        min-width: 300px;
+        mat-select, input {
+            width: 100%;
+        }
+    }
+    .buttons {
+        margin-top: 4px;
+    }
+    button {
+        margin: 0 4px;
+    }
+    button.picker {
+        margin-bottom: 8px;
+    }
+    .img-badge {
+        width: 164px;
+        height: 164px;
+        -o-object-fit: cover;
+        object-fit: cover;
+    }
+    .img-cover {
+        width: 96px;
+        height: 96px;
+        -o-object-fit: cover;
+        object-fit: cover;
+        margin: 16px 8px 0 8px;
+    }
+    p.mat-body-1 {
+        margin-top: 4px;
+    }
+    .form-title {
+        width: 332px;
+        margin: 0 8px 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        h5 {
+            padding-top: 16px;
+        }
+        img {
+            border-radius: 6px;
+        }
+    }
+    .ctrl-arr-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        .ctrl-arr-item {
+            position: relative;
+            .ctrl-btn-clear {
+                position: absolute;
+                right: 0;
+                top: 0;
+                margin: 0;
+            }
+        }
+    }
+    .ctrl-btn-add {
+        margin-top: -16px;
+    }
+    mat-radio-group {
+        mat-radio-button {
+            margin: 0 16px;
+        }
+    }
+}

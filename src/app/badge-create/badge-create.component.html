@@ -1,0 +1,441 @@
+<!--
+  ~ Copyright (C) 2018. Technology Services at California State University, Fresno
+  -->
+
+<mat-tab-group mat-stretch-tabs dynamicHeight (selectedIndexChange)="tabSelected($event)" #tabs>
+    <mat-tab label="New Badge">
+        <div class="mat-elevation-z4">
+            <mat-vertical-stepper [linear]="true" #stepperNewBadge>
+                <mat-step [stepControl]="badgeIssuersFormGroup">
+                    <form [formGroup]="badgeIssuersFormGroup" (ngSubmit)="getIssuerImage()">
+                        <ng-template matStepLabel>Select an Issuer</ng-template>
+                        <mat-form-field>
+                            <mat-error *ngIf="issuerIds.length===0">
+                                Sorry, system has <strong>no issuers</strong>
+                            </mat-error>
+                            <mat-select formControlName="name" placeholder="Select Issuer">
+                                <mat-option *ngFor="let issuer of issuerIds" [value]="issuer.name">{{issuer.name}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <div class="buttons">
+                            <button type="submit" mat-stroked-button color="accent" matStepperNext>Next</button>
+                        </div>
+                    </form>
+                </mat-step>
+                <mat-step [stepControl]="badgeNewFormGroup">
+                    <form [formGroup]="badgeNewFormGroup">
+                        <ng-template matStepLabel>New Badge</ng-template>
+                        <h4>Issuer ID: <b>{{badgeIssuersFormGroup.get('name').value}}</b></h4>
+                        <h5>Signature line:</h5>
+                        <div class="ctrl-arr-container" formArrayName="signatureLines">
+                            <div class="form-title"
+                                 *ngFor="let ignored of ctrlSignLineNew;let i=index">
+                                <div class="ctrl-arr-item" [formGroupName]="i">
+                                    <button type="button" class="ctrl-btn-clear" mat-icon-button
+                                            (click)="removeSignatureLines(badgeNewFormGroup,i)"
+                                            matTooltip="Remove this user" [matTooltipPosition]="'below'"
+                                            *ngIf="ctrlSignLineNew.length > 1">
+                                        <mat-icon mat-list-icon>clear</mat-icon>
+                                    </button>
+                                    <img class="img-cover"
+                                         [src]="baseToImgNewUser(i)||'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/1024px-Circle-icons-profile.svg.png'"
+                                         (click)="fileAvatarNew.click()">
+                                    <input #fileAvatarNew hidden type="file" accept="image/*"
+                                           (click)="ctrlSignLineNew[i].get('image').patchValue(null)"
+                                           (change)="imageToBaseAvatarNew($event, i)">
+                                    <br>
+                                    <mat-form-field>
+                                        <input matInput type="text" placeholder="Job title" formControlName="jobTitle"
+                                               required>
+                                    </mat-form-field>
+                                    <br>
+                                    <mat-form-field>
+                                        <input matInput type="text" placeholder="Name" formControlName="name" required>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="ctrl-btn-add" mat-icon-button
+                                matTooltip="Add another user" [matTooltipPosition]="'right'"
+                                (click)="addSignatureLines(badgeNewFormGroup, true)">
+                            <mat-icon mat-list-icon>add</mat-icon>
+                        </button>
+                        <br>
+                        <mat-form-field formGroupName="criteria">
+                            <textarea rows="3" matInput placeholder="Criteria: narrative" required
+                                      formControlName="narrative"></textarea>
+                        </mat-form-field>
+                        <br>
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Name" required formControlName="name">
+                        </mat-form-field>
+                        <br>
+                        <mat-form-field>
+                            <textarea rows="3" matInput placeholder="Description" required
+                                      formControlName="description"></textarea>
+                        </mat-form-field>
+                        <br>
+                        <br>
+                        <img class="img-badge"
+                             [src]="baseToImgNew||'https://www.freeiconspng.com/uploads/badge-icon-png-22.png'"
+                             (click)="fileNew.click()">
+                        <input #fileNew hidden type="file" accept="image/*"
+                               (click)="badgeNewFormGroup.get('image').patchValue(null)"
+                               (change)="imageToBaseNew($event)">
+                        <br>
+                        <button class="picker" type="button" mat-button (click)="fileNew.click()">Select badge image
+                        </button>
+                        <br>
+                        <!--mat-form-field> TODO - delete or not (check wire-frame)
+                            <mat-select placeholder="Select a layout">
+                                <mat-option [value]="'1'">Layout 1</mat-option>
+                                <mat-option [value]="'2'">Layout 2</mat-option>
+                                <mat-option [value]="'3'">Layout 3</mat-option>
+                            </mat-select>
+                        </mat-form-field-->
+                        <div class="buttons">
+                            <button type="button" mat-stroked-button matStepperPrevious>Back</button>
+                            <button type="button" mat-stroked-button color="warn"
+                                    (click)="stepperNewBadge.reset()">Reset
+                            </button>
+                            <button type="submit" mat-stroked-button color="accent" matStepperNext>Next</button>
+                        </div>
+                    </form>
+                </mat-step>
+                <mat-step [stepControl]="templateFormGroup">
+                    <form [formGroup]="templateFormGroup" (ngSubmit)="postBadge()">
+                        <ng-template matStepLabel>Select a Template</ng-template>
+                            <mat-radio-group formControlName="template" required>
+                                <br><br>
+                                <mat-radio-button value="1">
+                                    <html>
+                                        <head>
+                                            <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+                                            <meta charset="UTF-8">
+                                        </head>
+                                        <body>
+                                            <h3 class='cert-name' style="font-family: 'Lobster', cursive;">{{badgeNewFormGroup.get('name').value}}</h3>
+                                            <img class='logo' src="{{issuerImage}}" height='42' width='42'>
+                                            <img class='badge' src="{{badgeNewFormGroup.get('image').value}}" height='42' width='42'>
+                                            <p class='description' style="font-size:10px">{{badgeNewFormGroup.get('description').value}}</p>
+                                        </body>
+                                    </html>
+                                </mat-radio-button>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <mat-radio-button value="2">
+                                    <html>
+                                        <head>
+                                            <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+                                            <meta charset="UTF-8">
+                                        </head>
+                                        <body>
+                                            <h3 class='cert-name' style="font-family: 'Lobster', cursive;">{{badgeNewFormGroup.get('name').value}}</h3>
+                                            <img class='logo' src="{{badgeNewFormGroup.get('image').value}}" height='42' width='42'>
+                                            <img class='badge' src="{{issuerImage}}" height='42' width='42'>
+                                            <p class='description' style="font-size:10px">{{badgeNewFormGroup.get('description').value}}</p>
+                                        </body>
+                                    </html>
+                                </mat-radio-button>
+                                <br><br>
+                                <mat-radio-button value="3">
+                                    <html>
+                                        <head>
+                                            <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+                                            <meta charset="UTF-8">
+                                        </head>
+                                        <body class='body2'>
+                                            <h3 class='cert-name2' style="font-family: 'Lobster', cursive;">{{badgeNewFormGroup.get('name').value}}</h3>
+                                            <img class='logo2' src="{{issuerImage}}" height='42' width='42'>
+                                            <img class='badge2' src="{{badgeNewFormGroup.get('image').value}}" height='42' width='42'>
+                                            <p class='description2' style="font-size:10px">{{badgeNewFormGroup.get('description').value}}</p>
+                                        </body>
+                                    </html>
+                                </mat-radio-button>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <mat-radio-button value="4">
+                                    <html>
+                                        <head>
+                                            <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+                                            <meta charset="UTF-8">
+                                        </head>
+                                        <body class='body2'>
+                                            <h3 class='cert-name2' style="font-family: 'Lobster', cursive;">{{badgeNewFormGroup.get('name').value}}</h3>
+                                            <img class='logo2' src="{{badgeNewFormGroup.get('image').value}}" height='42' width='42'>
+                                            <img class='badge2' src="{{issuerImage}}" height='42' width='42'>
+                                            <p class='description2' style="font-size:10px">{{badgeNewFormGroup.get('description').value}}</p>
+                                        </body>
+                                    </html>
+                                </mat-radio-button>
+                                <br><br>
+                                <mat-radio-button value="5">
+                                    <html>
+                                        <head>
+                                            <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+                                        </head>
+                                        <body class='body3'>
+                                            <h3 class="cert-name3" style="font-family: 'Lobster', cursive;">{{badgeNewFormGroup.get('name').value}}</h3>
+                                            <img class="logo3" src="{{badgeNewFormGroup.get('image').value}}"  height="42" width="42">
+                                            <img class="badge3" src="{{issuerImage}}" height="42" width="42">
+                                            <p class="description3" style="font-size:10px">{{badgeNewFormGroup.get('description').value}}</p>
+                                        </body>
+                                    </html>
+                                    </mat-radio-button>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <mat-radio-button value="6">
+                                    <html>
+                                        <head>
+                                            <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+                                        </head>
+                                        <body class='body3'>
+                                            <h3 class="cert-name3" style="font-family: 'Lobster', cursive;">{{badgeNewFormGroup.get('name').value}}</h3>
+                                            <img class="logo3" src="{{issuerImage}}"  height="42" width="42">
+                                            <img class="badge3" src="{{badgeNewFormGroup.get('image').value}}" height="42" width="42">
+                                            <p class="description3" style="font-size:10px">{{badgeNewFormGroup.get('description').value}}</p>
+                                        </body>
+                                    </html>
+                                </mat-radio-button>
+                            </mat-radio-group>
+                            <br><br>
+                            <div class="buttons">
+                                <button type="submit" mat-stroked-button color="accent" matStepperNext>Create</button>
+                            </div>
+                    </form>
+                </mat-step>
+            </mat-vertical-stepper>
+        </div>
+    </mat-tab>
+    <mat-tab label="Badge Management">
+        <div class="mat-elevation-z4">
+            <mat-vertical-stepper [linear]="true" #stepperBadgeManage>
+                <mat-step [stepControl]="badgeManageIssuersFormGroup">
+                    <form [formGroup]="badgeManageIssuersFormGroup" (ngSubmit)="getBadgeIds()">
+                        <ng-template matStepLabel>Select an Issuer</ng-template>
+                        <mat-form-field>
+                            <mat-error *ngIf="issuerIds.length===0">
+                                Sorry, system has <strong>no issuers</strong>
+                            </mat-error>
+                            <mat-select formControlName="name" placeholder="Select Issuer">
+                                <mat-option *ngFor="let issuer of issuerIds" [value]="issuer.name">{{issuer.name}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <div class="buttons">
+                            <button type="button" mat-stroked-button (click)="tabs.selectedIndex = 0">New Badge</button>
+                            <button type="submit" mat-stroked-button color="accent" matStepperNext
+                                    [disabled]="issuerIds.length===0 || !badgeManageIssuersFormGroup.get('name').value">
+                                Next
+                            </button>
+                        </div>
+                    </form>
+                </mat-step>
+                <mat-step [stepControl]="badgeManageBadgesFormGroup">
+                    <form [formGroup]="badgeManageBadgesFormGroup" (ngSubmit)="getBadgeById()">
+                        <ng-template matStepLabel>Select a Badge</ng-template>
+                        <mat-form-field>
+                            <mat-error *ngIf="badgeIds.length===0">
+                                Sorry, selected issuer has <strong>no badges</strong>
+                            </mat-error>
+                            <mat-select formControlName="name" placeholder="Select Badge">
+                                <mat-option *ngFor="let badge of badgeIds" [value]="badge.name">{{badge.name}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <div class="buttons">
+                            <button type="button" mat-stroked-button matStepperPrevious (click)="stepperBadgeManage.reset()">Back</button>
+                            <button type="submit" mat-stroked-button color="accent" matStepperNext
+                                    [disabled]="badgeIds.length===0 || !badgeManageBadgesFormGroup.get('name').value">
+                                Next
+                            </button>
+                        </div>
+                    </form>
+                </mat-step>
+                <mat-step [stepControl]="badgeManageBadgeFormGroup">
+                    <form [formGroup]="badgeManageBadgeFormGroup">
+                        <ng-template matStepLabel>Update Badge</ng-template>
+                        <h4>Issuer ID: <b>{{badgeManageIssuersFormGroup.get('name').value}}</b></h4>
+                        <h5>Signature line:</h5>
+                        <div class="ctrl-arr-container" formArrayName="signatureLines">
+                            <div class="form-title"
+                                 *ngFor="let sign of ctrlSignLineExisting;let i=index">
+                                <div class="ctrl-arr-item" [formGroupName]="i">
+                                    <button type="button" class="ctrl-btn-clear" mat-icon-button
+                                            (click)="removeSignatureLines(badgeManageBadgeFormGroup,i)"
+                                            matTooltip="Remove this user" [matTooltipPosition]="'below'"
+                                            *ngIf="ctrlSignLineExisting.length > 1">
+                                        <mat-icon mat-list-icon>clear</mat-icon>
+                                    </button>
+                                    <img class="img-cover"
+                                         [src]="baseToImgExistingUser(i)||'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/1024px-Circle-icons-profile.svg.png'"
+                                         (click)="fileAvatarExisting.click()">
+                                    <input #fileAvatarExisting hidden type="file" accept="image/*"
+                                           (click)="ctrlSignLineExisting[i].get('image').patchValue(null)"
+                                           (change)="imageToBaseAvatarExisting($event, i)">
+                                    <br>
+                                    <mat-form-field>
+                                        <input matInput type="text" placeholder="Job title" formControlName="jobTitle"
+                                               required>
+                                    </mat-form-field>
+                                    <br>
+                                    <mat-form-field>
+                                        <input matInput type="text" placeholder="Name" formControlName="name" required>
+                                    </mat-form-field>
+                                    <mat-form-field>
+                                        <input matInput type="text" placeholder="Type" readonly formControlName="type">
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="ctrl-btn-add" mat-icon-button
+                                matTooltip="Add another user" [matTooltipPosition]="'right'"
+                                (click)="addSignatureLines(badgeManageBadgeFormGroup,false)">
+                            <mat-icon mat-list-icon>add</mat-icon>
+                        </button>
+                        <br>
+                    <!--
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Type" required formControlName="type" readonly>
+                        </mat-form-field>
+                        <br>
+                    -->
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Id" required formControlName="id" readonly>
+                        </mat-form-field>
+                        <br>
+                        <mat-form-field formGroupName="criteria">
+                            <textarea rows="3" matInput placeholder="Criteria: narrative"
+                                      formControlName="narrative"></textarea>
+                        </mat-form-field>
+                        <br>
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Name" required formControlName="name">
+                        </mat-form-field>
+                        <br>
+                        <mat-form-field>
+                            <textarea rows="3" matInput placeholder="Description"
+                                      formControlName="description"></textarea>
+                        </mat-form-field>
+                        <br>
+                        <img class="img-badge"
+                             [src]="baseToImgExisting||'https://www.freeiconspng.com/uploads/badge-icon-png-22.png'"
+                             (click)="fileExisting.click()">
+                        <input #fileExisting hidden type="file" accept="image/*"
+                               (click)="badgeManageBadgeFormGroup.get('image').patchValue(null)"
+                               (change)="imageToBaseExisting($event)">
+                        <br>
+                        <button class="picker" type="button" mat-button (click)="fileExisting.click()">
+                            Select badge image
+                        </button>
+                        <br>
+                        <div class="buttons">
+                            <button type="button" mat-stroked-button matStepperPrevious>Back</button>
+                            <button type="button" mat-stroked-button color="warn"
+                                    (click)="stepperBadgeManage.reset()">Reset
+                            </button>
+                            <button type="submit" mat-stroked-button color="accent" matStepperNext>Next</button>
+                        </div>
+                    </form>
+                </mat-step>
+                <mat-step [stepControl]="templateFormGroup">
+                    <form [formGroup]="templateFormGroup" (ngSubmit)="postBadge(true)">
+                        <ng-template matStepLabel>Select a Template</ng-template>
+                            <mat-radio-group formControlName="template" required>
+                                <br><br>
+                                <mat-radio-button value="1">
+                                    <html>
+                                        <head>
+                                            <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+                                            <meta charset="UTF-8">
+                                        </head>
+                                        <body>
+                                            <h3 class='cert-name' style="font-family: 'Lobster', cursive;">{{badgeManageBadgeFormGroup.get('name').value}}</h3>
+                                            <img class='logo' src="{{issuerImage}}" height='42' width='42'>
+                                            <img class='badge' src="{{badgeManageBadgeFormGroup.get('image').value}}" height='42' width='42'>
+                                            <p class='description' style="font-size:10px">{{badgeManageBadgeFormGroup.get('description').value}}</p>
+                                        </body>
+                                    </html>
+                                </mat-radio-button>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <mat-radio-button value="2">
+                                    <html>
+                                        <head>
+                                            <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+                                            <meta charset="UTF-8">
+                                        </head>
+                                        <body>
+                                            <h3 class='cert-name' style="font-family: 'Lobster', cursive;">{{badgeManageBadgeFormGroup.get('name').value}}</h3>
+                                            <img class='logo' src="{{badgeManageBadgeFormGroup.get('image').value}}" height='42' width='42'>
+                                            <img class='badge' src="{{issuerImage}}" height='42' width='42'>
+                                            <p class='description' style="font-size:10px">{{badgeManageBadgeFormGroup.get('description').value}}</p>
+                                        </body>
+                                    </html>
+                                </mat-radio-button>
+                                <br><br>
+                                <mat-radio-button value="3">
+                                    <html>
+                                        <head>
+                                            <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+                                            <meta charset="UTF-8">
+                                        </head>
+                                        <body class='body2'>
+                                            <h3 class='cert-name2' style="font-family: 'Lobster', cursive;">{{badgeManageBadgeFormGroup.get('name').value}}</h3>
+                                            <img class='logo2' src="{{issuerImage}}" height='42' width='42'>
+                                            <img class='badge2' src="{{badgeManageBadgeFormGroup.get('image').value}}" height='42' width='42'>
+                                            <p class='description2' style="font-size:10px">{{badgeNewFormGroup.get('description').value}}</p>
+                                        </body>
+                                    </html>
+                                </mat-radio-button>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <mat-radio-button value="4">
+                                    <html>
+                                        <head>
+                                            <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+                                            <meta charset="UTF-8">
+                                        </head>
+                                        <body class='body2'>
+                                            <h3 class='cert-name2' style="font-family: 'Lobster', cursive;">{{badgeManageBadgeFormGroup.get('name').value}}</h3>
+                                            <img class='logo2' src="{{badgeManageBadgeFormGroup.get('image').value}}" height='42' width='42'>
+                                            <img class='badge2' src="{{issuerImage}}" height='42' width='42'>
+                                            <p class='description2' style="font-size:10px">{{badgeNewFormGroup.get('description').value}}</p>
+                                        </body>
+                                    </html>
+                                </mat-radio-button>
+                                <br><br>
+                                <mat-radio-button value="5">
+                                    <html>
+                                        <head>
+                                            <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+                                        </head>
+                                        <body class='body3'>
+                                            <h3 class="cert-name3" style="font-family: 'Lobster', cursive;">{{badgeManageBadgeFormGroup.get('name').value}}</h3>
+                                            <img class="logo3" src="{{badgeManageBadgeFormGroup.get('image').value}}"  height="42" width="42">
+                                            <img class="badge3" src="{{issuerImage}}" height="42" width="42">
+                                            <p class="description3" style="font-size:10px">{{badgeManageBadgeFormGroup.get('description').value}}</p>
+                                        </body>
+                                    </html>
+                                    </mat-radio-button>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <mat-radio-button value="6">
+                                    <html>
+                                        <head>
+                                            <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+                                        </head>
+                                        <body class='body3'>
+                                            <h3 class="cert-name3" style="font-family: 'Lobster', cursive;">{{badgeManageBadgeFormGroup.get('name').value}}</h3>
+                                            <img class="logo3" src="{{issuerImage}}"  height="42" width="42">
+                                            <img class="badge3" src="{{badgeManageBadgeFormGroup.get('image').value}}" height="42" width="42">
+                                            <p class="description3" style="font-size:10px">{{badgeManageBadgeFormGroup.get('description').value}}</p>
+                                        </body>
+                                    </html>
+                                </mat-radio-button>
+                            </mat-radio-group>
+                            <br><br>
+                            <div class="buttons">
+                                <button type="submit" mat-stroked-button color="accent" matStepperNext>Update</button>
+                            </div>
+                    </form>
+                </mat-step>
+            </mat-vertical-stepper>
+        </div>
+    </mat-tab>
+</mat-tab-group>

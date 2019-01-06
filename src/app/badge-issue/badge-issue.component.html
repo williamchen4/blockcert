@@ -1,0 +1,144 @@
+<!--
+  ~ Copyright (C) 2018. Technology Services at California State University, Fresno
+  -->
+
+  <mat-tab-group mat-stretch-tabs dynamicHeight (selectedIndexChange)="tabSelected($event)" #tabs>
+    <mat-tab label="Issue Badge(s)">
+        <div class="mat-elevation-z4">
+            <mat-vertical-stepper [linear]="true" #stepperBadge>
+                <mat-step [stepControl]="issueIssuerFormGroup">
+                    <form [formGroup]="issueIssuerFormGroup" (ngSubmit)="getBadgeIds()">
+                        <ng-template matStepLabel>Select an Issuer</ng-template>
+                        <mat-form-field>
+                            <mat-error *ngIf="issuerIds.length===0">
+                                Sorry, system has <strong>no issuers</strong>
+                            </mat-error>
+                            <mat-select formControlName="name" placeholder="Select Issuer">
+                                <mat-option *ngFor="let issuer of issuerIds" [value]="issuer.name">{{issuer.name}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <div class="buttons">
+                            <button type="submit" mat-stroked-button color="accent" matStepperNext>Next</button>
+                        </div>
+                    </form>
+                </mat-step>
+                <mat-step [stepControl]="issueBadgesFormGroup">
+                    <form [formGroup]="issueBadgesFormGroup">
+                        <ng-template matStepLabel>Select a Badge</ng-template>
+                        <mat-form-field>
+                            <mat-error *ngIf="badgeIds.length===0">
+                                Sorry, user has <strong>no badges</strong>
+                            </mat-error>
+                            <mat-select formControlName="name" placeholder="Select Badge">
+                                <mat-option *ngFor="let badge of badgeIds" [value]="badge.name">{{badge.name}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <div class="buttons">
+                            <button type="button" mat-stroked-button matStepperPrevious (click)="stepperBadge.reset()">Back</button>
+                            <button type="submit" mat-stroked-button color="accent" matStepperNext>Next</button>
+                        </div>
+                    </form>
+                </mat-step>
+                <mat-step>
+                    <form [formGroup]="issueRecipientsFormGroup" (ngSubmit)="postIssueBadgeRecipients()">
+                        <ng-template matStepLabel>Select Recipients</ng-template>
+                        <h2>Badge: <b>{{issueBadgesFormGroup.get('name').value}}</b></h2>
+
+                        <div>
+                        <!--Single Recipient-->
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Enter Single Recipient ID" formControlName="id" style="display:inline">
+                        </mat-form-field>
+
+                        <!--Multiple Recipients-->
+                        <div formArrayName="ids">
+                            <input #myInput type="file" class="upload" (change)="changeListener($event.target.files)"> 
+                        </div>
+                        </div>
+                        <br><br>
+
+                        <div class="buttons">
+                            <button type="button" mat-stroked-button matStepperPrevious (click)="resetIssue()">Back</button>
+                            <button type="button" mat-stroked-button color="warn" (click)="stepperBadge.reset(); resetIssue()">Reset
+                            </button>
+                            <button type="submit" mat-stroked-button color="accent">Issue</button>
+                        </div>
+                    </form>
+                </mat-step>
+            </mat-vertical-stepper>
+        </div>
+    </mat-tab>
+    <mat-tab label="New Recipient">
+        <form [formGroup]="recipientNewFormGroup" (ngSubmit)="postRecipient()">
+            <div class="form-container">
+                <mat-form-field>
+                    <input matInput type="text" placeholder="Name" formControlName="name" required>
+                </mat-form-field>
+                <br>
+                <mat-form-field>
+                    <input matInput type="text" placeholder="Email" formControlName="email" required>
+                </mat-form-field>
+                <br>
+            </div>
+            <div class="buttons">
+                <button type="button" mat-stroked-button color="warn" (click)="recipientNewFormGroup.reset()">Reset
+                </button>
+                <button type="submit" mat-stroked-button color="accent">Submit</button>
+            </div>
+        </form>
+    </mat-tab>
+    <mat-tab label="Manage Recipient">
+        <div class="mat-elevation-z4">
+            <mat-vertical-stepper [linear]="true" #stepperRecipient>
+                <mat-step [stepControl]="recipientManageSearchFormGroup">
+                    <form [formGroup]="recipientManageSearchFormGroup" (ngSubmit)="getRecipientById()">
+                        <ng-template matStepLabel>Select Recipient</ng-template>
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Enter Recipient ID or Email" formControlName="id" [tagValidator]="allRecipientIDandEmail"
+                                   required [matAutocomplete]="autoManageRecipient">
+                            <mat-autocomplete #autoManageRecipient="matAutocomplete">
+                                <mat-option *ngFor="let badge of badgeIdsManage" [value]="badge">{{badge}}</mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                        <div class="buttons">
+                            <button mat-stroked-button color="accent" matStepperNext>Select</button>
+                        </div>
+                    </form>
+                </mat-step>
+                <mat-step>
+                    <form [formGroup]="recipientDetailsFormGroup" (ngSubmit)=" postRecipientById()">
+                        <ng-template matStepLabel>Recipient Info</ng-template>
+                        <div class="form-container">
+                            <mat-form-field>
+                                <input matInput type="text" placeholder="Name" formControlName="name" required>
+                            </mat-form-field>
+                            <br>
+                            <mat-form-field>
+                                <input matInput type="text" placeholder="Email" formControlName="email" required>
+                            </mat-form-field>
+                            <br>
+                            <label>Addresses:</label><br>
+                            &nbsp;
+                            <div formArrayName="addresses" style="text-align: center;">
+                                <div style="display: inline-block; text-align: left;">
+                                    <div *ngFor="let obj of myArray">
+                                        ID: {{obj.id | json}} &nbsp;&nbsp;&nbsp; Address: {{obj.address | json}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br><br>
+                        <div class="buttons">
+                            <p>Public Key Indicator: <a mat-button routerLink=".">RESEND</a></p> <!-- TODO -->
+                            <button type="button" mat-stroked-button matStepperPrevious>Back</button>
+                            <button type="submit" mat-stroked-button color="accent">Submit</button>
+                            <button type="button" mat-stroked-button (click)="manageRecipientIssue()">Issue</button>
+                        </div>
+                    </form>
+                </mat-step>
+            </mat-vertical-stepper>
+        </div>
+    </mat-tab>
+</mat-tab-group>
